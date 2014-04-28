@@ -1,0 +1,40 @@
+﻿﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Routes</title>
+</head>
+<body>
+	<h1>Application Routes</h1>
+    <p>
+        There is currently no documentation for these routes, but a lot of the system should be fairly intuitive. Explore the API by clicking around the routes without {parameters} and you should discover most of what is available.
+    </p>
+    <p>
+        Content negotiation is an open issue at the moment - at the moment everything is JSON only.
+    </p>
+    <p>
+        <h1>Returned Data</h1>
+        There are a few things to be aware of with the data returned from the API:
+        <ul>
+            <li>Most entities returned will have a "$type" field which is more or less useless, this indicates the internal CLI type of the object and can be safely ignored.</li>
+            <li>Some entities have an "id" field which is a link directly this this entity. You can usually follow this link to get the canonical representation of the entity with all fields (instead of a lightweight representation which may be missing a few less important fields</li>
+
+        </ul>
+    </p>
+    <ul>
+        @foreach (var module in @Model) {
+            @foreach (var route in @module.Value) {
+                <li>
+                    @{
+                        string text = @String.Format("{0} [{1}]", route.Item2.Path, route.Item2.Method);
+                    } 
+                    @if (@route.Item2.Method == "GET") {
+                        <a href='@Url.Content("~" + route.Item2.Path)'>@text</a>
+                    } else {
+                        @text
+                    }
+                </li>
+            }
+        }
+    </ul>
+</body>
+</html>
