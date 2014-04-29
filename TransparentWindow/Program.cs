@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Globalization;
 using System.Threading;
 using System.Windows.Forms;
 using Awesomium.Core;
 using Ninject;
-using Ninject.Parameters;
 using RestSharp;
-using TransparentWindow.Forms;
 using TransparentWindow.Nancy;
 
 namespace TransparentWindow

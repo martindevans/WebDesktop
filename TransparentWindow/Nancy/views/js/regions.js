@@ -3,11 +3,12 @@
         var elements = $(".form-region");
         var regions = [];
         for (var i = 0; i < elements.length; i++) {
+            var $e = $(elements[i]);
             regions.push({
-                X: elements[i].clientLeft,
-                Y: elements[i].clientTop,
-                Width: elements[i].clientWidth,
-                Height: elements[i].clientHeight * 2,
+                X: $e.position().left,
+                Y: $e.position().top,
+                Width: $e.width(),
+                Height: $e.height(),
             });
         }
 

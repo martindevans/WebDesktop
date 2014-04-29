@@ -1,8 +1,11 @@
 ﻿<html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>@Model.ClientId</title>
         
         <script src="../js/jquery-2.1.0.min.js" type="text/javascript"></script>
+		<script src="../js/d3.min.js" type="text/javascript"></script>
+
 		<script src="../js/regions.js" type="text/javascript"></script>
         
         <script src="../js/cufon-yui.js" type="text/javascript"></script>
@@ -21,38 +24,51 @@
                 background-color: rgba(255, 255, 255, 0);
             }
             
-            #no-url
-            {
-                font-size: 2em;
+			.top-left-container
+			{
+				font-size: 6em;
+				margin-top: 0.4em;
+				margin-left: 0.4em;
+			}
+
+            .clock
+            {                
+                text-align: left;
                 
-                margin-left: auto;
-                margin-right: auto;
-                margin-top: 1em;
-                width: 50%;
-                text-align: center;
-                
-                background-color: rgba(255, 255, 255, 0.8);
-                opacity: 0.5;
-                
-                -webkit-transition: opacity 0.5s;
+                background-color: rgba(255, 255, 255, 0.0);
+                opacity: 0.99;
             }
-            
-            #no-url:hover
-            {
-                opacity: 1;
-            }
+
+			.clear-left
+			{
+				float: left;
+				clear: left;
+			}
         </style>
     </head>
     <body>
-        <div class="content form-region">
-            <div class="cufon-segoe-ui" id="no-url">There is no URL configured for this screen - Click HERE to configure.</div>
+        <div class="top-left-container">
+            <span class="cufon-segoe-ui clear-left form-region clock"></span>
+
+			<span class="cufon-segoe-ui clear-left form-region">SOME TEXT</span>
         </div>
         
         <!-- To avoid delays, initialize Cufon before other scripts at the bottom -->
 		<script type="text/javascript">Cufon.now();</script>
 
 		<script type="text/javascript">$(function() {
-			regions.evaluateRegions("http://localhost:56347/", "@Model.ClientId")
+			setInterval(function() {
+
+				var d = new Date();
+				$('.clock').text(("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2) + ":" + ("0" + d.getSeconds()).slice(-2));
+
+				Cufon.replace('.cufon-segoe-ui', {
+					fontFamily: 'Segoe UI',
+					textShadow: "rgba(151, 151, 151, 0.7) 1px 1px, rgba(151, 151, 151, 0.7) -1px -1px, rgba(151, 151, 151, 0.7) 1px -1px, rgba(151, 151, 151, 0.7) -1px 1px"
+				});
+				regions.evaluateRegions("http://localhost:56347/", "@Model.ClientId");
+
+			}, 100);
 		});</script>
     </body>
 </html>

@@ -49,10 +49,26 @@ namespace TransparentWindow.Forms
 
             //Navigate to it
             WebView.Source = uri;
-
-            //No region at all, set a region encompassing the areas you want
-            Region = new Region(new RectangleF(0, 0, 0, 0));
         }
+
+        //protected override void OnLoad(EventArgs e)
+        //{
+        //    base.OnLoad(e);
+
+        //    ContextMenu = new ContextMenu(
+        //        new MenuItem[]
+        //        {
+        //            new MenuItem("Blind", new MenuItem[]
+        //            {
+        //                new MenuItem("Blind"),
+        //                new MenuItem("Drunk"),
+        //                new MenuItem("Llamas"),
+        //            }),
+        //            new MenuItem("Drunk"),
+        //            new MenuItem("Llamas"),
+        //        }
+        //    );
+        //}
 
         private void CreateSurface(object sender, CreateSurfaceEventArgs args)
         {

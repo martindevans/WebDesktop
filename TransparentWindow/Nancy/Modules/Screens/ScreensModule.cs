@@ -53,13 +53,12 @@ namespace TransparentWindow.Nancy.Modules.Screens
             var rectangle = this.Bind<Rectangle>();
             var form = _screenManager.GetById((string) arg.clientid);
 
-            return form.Invoke(new Func<Region>(() =>
-            {
-                var r = form.Region.Clone();
-                r.Union(new RectangleF(rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height));
-                form.Region = r;
-                return form.Region;
-            }));
+            GraphicsPath g = new GraphicsPath();
+            g.AddRectangle(new RectangleF(rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height));
+
+            form.Invoke(new Action(() => form.AddClickRegion(g)));
+
+            return HttpStatusCode.OK;
         }
 
         private object PutRegion(dynamic arg)
@@ -67,25 +66,18 @@ namespace TransparentWindow.Nancy.Modules.Screens
             var rectangles = this.Bind<Rectangles>().Regions;
             var form = _screenManager.GetById((string)arg.clientid);
 
-            return form.Invoke(new Func<Region>(() =>
-            {
-                var r = new Region(new RectangleF(0, 0, 0, 0));
-                for (int i = 0; i < rectangles.Length; i++)
-                    r.Union(new RectangleF(rectangles[i].X, rectangles[i].Y, rectangles[i].Width, rectangles[i].Height));
-                form.Region = r;
-                return form.Region;
-            }));
+            GraphicsPath g = new GraphicsPath();
+            foreach (var rectangle in rectangles)
+                g.AddRectangle(new RectangleF(rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height));
+
+            return form.Invoke(new Action(() => form.SetClickRegion(g)));
         }
 
         private object DeleteRegion(dynamic arg)
         {
             var form = _screenManager.GetById((string)arg.clientid);
 
-            return form.Invoke(new Func<Region>(() =>
-            {
-                form.Region = new Region(new RectangleF(0, 0, 0, 0));
-                return form.Region;
-            }));
+            return form.Invoke(new Action(form.ClearClickRegion));
         }
 
         private struct Rectangle
