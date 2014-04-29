@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Windows.Forms;
+using Nancy.Helpers;
 using TransparentWindow.Forms;
 
 namespace TransparentWindow
@@ -36,15 +37,11 @@ namespace TransparentWindow
 
         private string Id(string deviceName)
         {
-            using (var sha = new SHA256Managed())
+            using (var sha = new SHA1Managed())
             {
                 var b = sha.ComputeHash(Encoding.UTF32.GetBytes(deviceName));
 
-                StringBuilder builder = new StringBuilder(b.Length);
-                for (int i = 0; i < b.Length; i++)
-                    builder.Append(Encoding.ASCII.GetString(new byte[] { (byte)(b[i] % 25 + 97) }));
-
-                return builder.ToString();
+                return BitConverter.ToString(b).Replace("-", "");
             }
         }
 

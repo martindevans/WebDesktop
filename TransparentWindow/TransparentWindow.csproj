@@ -107,6 +107,7 @@
     <Compile Include="Helpers.cs" />
     <Compile Include="Nancy\Bootstrapper.cs" />
     <Compile Include="Nancy\CustomJsonSerializer.cs" />
+    <Compile Include="Nancy\Modules\Machine\MachineModule.cs" />
     <Compile Include="Nancy\Modules\Main\MainModule.cs" />
     <Compile Include="Nancy\Modules\Screens\ScreensModule.cs" />
     <Compile Include="Nancy\Modules\Settings\SettingsModule.cs" />
@@ -193,6 +194,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Nancy\views\js\d3.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Nancy\views\js\TimeSpan.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

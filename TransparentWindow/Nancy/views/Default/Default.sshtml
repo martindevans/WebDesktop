@@ -5,6 +5,7 @@
         
         <script src="../js/jquery-2.1.0.min.js" type="text/javascript"></script>
 		<script src="../js/d3.min.js" type="text/javascript"></script>
+		<script src="../js/TimeSpan.js" type="text/javascript"></script>
 
 		<script src="../js/regions.js" type="text/javascript"></script>
         
@@ -22,51 +23,99 @@
                 width: 100%;
                 height: 100%;
                 background-color: rgba(255, 255, 255, 0);
+				overflow: hidden;
             }
             
-			.top-left-container
+			.top-right-container
 			{
 				font-size: 6em;
 				margin-top: 0.4em;
-				margin-left: 0.4em;
+				margin-right: 0.4em;
+				color: deepskyblue;
+			}
+
+			.clear-left
+			{
+				float: right;
+				clear: right;
 			}
 
             .clock
             {                
-                text-align: left;
+                text-align: right;
                 
                 background-color: rgba(255, 255, 255, 0.0);
                 opacity: 0.99;
             }
 
-			.clear-left
+			.day
 			{
-				float: left;
-				clear: left;
+				font-size: 0.5em;
+				margin-top: -0.25em;
+				margin-right: 0.5em;
+			}
+
+			.date
+			{
+				font-size: 0.3em;
+				margin-top: -0.1em;
+				margin-right: 1em;
+			}
+
+			.uptime
+			{
+				font-size: 0.25em;
+				margin-bottom: 0.25em;
 			}
         </style>
     </head>
     <body>
-        <div class="top-left-container">
-            <span class="cufon-segoe-ui clear-left form-region clock"></span>
-
-			<span class="cufon-segoe-ui clear-left form-region">SOME TEXT</span>
+        <div class="top-right-container">
+			<span class="cufon-segoe-ui clear-left uptime"></span>
+            <span class="cufon-segoe-ui clear-left clock"></span>
+			<span class="clear-left date-container">
+				<span class="cufon-segoe-ui clear-left day">TUESDAY</span>
+				<span class="cufon-segoe-ui clear-left date">April 29th, 2014</span>
+			</span>
         </div>
         
         <!-- To avoid delays, initialize Cufon before other scripts at the bottom -->
 		<script type="text/javascript">Cufon.now();</script>
 
-		<script type="text/javascript">$(function() {
-			setInterval(function() {
+		<script type="text/javascript">
+		function updatedValue() {
+			Cufon.replace('.cufon-segoe-ui', {
+				fontFamily: 'Segoe UI',
+				textShadow: "rgba(15, 15, 15, 0.7) 1px 1px 2px, rgba(15, 15, 15, 0.7) -1px -1px 2px, rgba(15, 15, 15, 0.7) 1px -1px 2px, rgba(15, 15, 15, 0.7) -1px 1px 2px"
+			});
+		}
 
+		$(function() {
+			var uptimeStart = null;
+			$.ajax({
+				url: "http://localhost:56347/machine/uptime",
+				type: "GET",
+				contentType: "application/json"
+			})
+			.done(function(data) {
+				uptimeStart = new Date(new Date().valueOf() - data.seconds * 1000);
+			});
+
+			setInterval(function() {
 				var d = new Date();
 				$('.clock').text(("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2) + ":" + ("0" + d.getSeconds()).slice(-2));
 
-				Cufon.replace('.cufon-segoe-ui', {
-					fontFamily: 'Segoe UI',
-					textShadow: "rgba(151, 151, 151, 0.7) 1px 1px, rgba(151, 151, 151, 0.7) -1px -1px, rgba(151, 151, 151, 0.7) 1px -1px, rgba(151, 151, 151, 0.7) -1px 1px"
-				});
-				regions.evaluateRegions("http://localhost:56347/", "@Model.ClientId");
+				if (uptimeStart) {
+					var ts = TimeSpan.FromDates(uptimeStart, new Date());
+					var uptimeString = "";
+					if (ts.days() > 0) {
+						uptimeString += ts.days() + " Days ";
+					}
+					uptimeString += ts.hours() + " Hours " + ts.minutes() + " Minutes";
+					$('.uptime').text("Uptime: " + uptimeString);
+				}
+
+				updatedValue();
 
 			}, 100);
 		});</script>
