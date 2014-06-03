@@ -6,6 +6,7 @@
         <script src="../js/jquery-2.1.0.min.js" type="text/javascript"></script>
 		<script src="../js/d3.min.js" type="text/javascript"></script>
 		<script src="../js/TimeSpan.js" type="text/javascript"></script>
+		<script src="../js/moment.js" type="text/javascript"></script>
 
 		<script src="../js/regions.js" type="text/javascript"></script>
         
@@ -73,10 +74,8 @@
         <div class="top-right-container">
 			<span class="cufon-segoe-ui clear-left uptime"></span>
             <span class="cufon-segoe-ui clear-left clock"></span>
-			<span class="clear-left date-container">
-				<span class="cufon-segoe-ui clear-left day">TUESDAY</span>
-				<span class="cufon-segoe-ui clear-left date">April 29th, 2014</span>
-			</span>
+			<span class="cufon-segoe-ui clear-left day"></span>
+			<span class="cufon-segoe-ui clear-left date"></span>
         </div>
         
         <!-- To avoid delays, initialize Cufon before other scripts at the bottom -->
@@ -90,6 +89,7 @@
 			});
 		}
 
+		var days = ["SUNDAY", "MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY","SATURDAY"];
 		$(function() {
 			var uptimeStart = null;
 			$.ajax({
@@ -114,6 +114,9 @@
 					uptimeString += ts.hours() + " Hours " + ts.minutes() + " Minutes";
 					$('.uptime').text("Uptime: " + uptimeString);
 				}
+
+				$('.day').text(days[new Date().getDay()]);
+				$('.date').text(moment().format('MMMM Do YYYY'));
 
 				updatedValue();
 
