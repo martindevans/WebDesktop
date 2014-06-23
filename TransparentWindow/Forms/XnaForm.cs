@@ -35,7 +35,7 @@ namespace TransparentWindow.Forms
 
         readonly Stopwatch _stopWatch = Stopwatch.StartNew();
 
-        readonly TimeSpan _targetElapsedTime = TimeSpan.FromTicks(TimeSpan.TicksPerSecond / 60);
+        readonly TimeSpan _targetElapsedTime = TimeSpan.FromTicks(TimeSpan.TicksPerSecond / 30);
         readonly TimeSpan _maxElapsedTime = TimeSpan.FromTicks(TimeSpan.TicksPerSecond / 10);
 
         TimeSpan _accumulatedTime;
@@ -80,6 +80,38 @@ namespace TransparentWindow.Forms
         {
             base.OnResize(e);
 
+            ResetGraphicsDevice();
+        }
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+
+            if (GraphicsDevice.GraphicsDeviceStatus == GraphicsDeviceStatus.Normal)
+            {
+                // Clear device with fully transparent black
+                GraphicsDevice.Clear(Color.Transparent);
+
+                //Draw stuff
+                Draw();
+
+                // Present the device contents into form
+                try
+                {
+                    GraphicsDevice.Present();
+                }
+                catch (DeviceLostException)
+                {
+                }
+            }
+            else if (GraphicsDevice.GraphicsDeviceStatus == GraphicsDeviceStatus.NotReset)
+            {
+                ResetGraphicsDevice();
+            }
+        }
+
+        private void ResetGraphicsDevice()
+        {
             //Resize graphics device
             if (GraphicsDevice != null)
             {
@@ -91,20 +123,6 @@ namespace TransparentWindow.Forms
                     PresentationInterval = PresentInterval.One
                 });
             }
-        }
-
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            base.OnPaint(e);
-
-            // Clear device with fully transparent black
-            GraphicsDevice.Clear(Color.Transparent);
-
-            //Draw stuff
-            Draw();
-
-            // Present the device contents into form
-            GraphicsDevice.Present();
         }
 
         protected virtual void Draw()

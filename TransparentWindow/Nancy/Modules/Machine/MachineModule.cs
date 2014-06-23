@@ -12,6 +12,7 @@ namespace TransparentWindow.Nancy.Modules.Machine
         {
             Get["/performancecounters/{category_name}/{counter_name}"] = GetPerformanceCounter;
             Get["/name"] = _ => new { name = Environment.MachineName };
+            Get["/username"] = _ => new { username = Environment.UserName };
             Get["/uptime"] = _ =>
             {
                 var tspan = TimeSpan.FromMilliseconds(Environment.TickCount);

@@ -30,15 +30,22 @@
 			.top-right-container
 			{
 				font-size: 6em;
-				margin-top: 0.4em;
+				margin-top: 0.2em;
 				margin-right: 0.4em;
 				color: deepskyblue;
+				padding-right: 0.1em;
 			}
 
 			.clear-left
 			{
 				float: right;
 				clear: right;
+			}
+
+			.uptime
+			{
+				font-size: 0.25em;
+				margin-bottom: 0.25em;
 			}
 
             .clock
@@ -49,24 +56,21 @@
                 opacity: 0.99;
             }
 
-			.day
+			.date
 			{
 				font-size: 0.5em;
 				margin-top: -0.25em;
-				margin-right: 0.5em;
 			}
 
-			.date
+			.day
 			{
 				font-size: 0.3em;
 				margin-top: -0.1em;
-				margin-right: 1em;
 			}
 
-			.uptime
+			.nowplaying
 			{
-				font-size: 0.25em;
-				margin-bottom: 0.25em;
+				font-size: 0.3em;
 			}
         </style>
     </head>
@@ -74,10 +78,11 @@
         <div class="top-right-container">
 			<span class="cufon-segoe-ui clear-left uptime"></span>
             <span class="cufon-segoe-ui clear-left clock"></span>
-			<span class="cufon-segoe-ui clear-left day"></span>
 			<span class="cufon-segoe-ui clear-left date"></span>
+			<span class="cufon-segoe-ui clear-left day"></span>
+			<span class="cufon-segoe-ui clear-left nowplaying form-region"></span>
         </div>
-        
+
         <!-- To avoid delays, initialize Cufon before other scripts at the bottom -->
 		<script type="text/javascript">Cufon.now();</script>
 
@@ -115,12 +120,45 @@
 					$('.uptime').text("Uptime: " + uptimeString);
 				}
 
+				$('.date').text(moment().format('YYYY MMMM Do'));
 				$('.day').text(days[new Date().getDay()]);
-				$('.date').text(moment().format('MMMM Do YYYY'));
 
 				updatedValue();
 
 			}, 100);
-		});</script>
+
+			function updateLastFM()
+			{
+				var lastFmUsername = "martindevans";
+				var lastFmApiKey = "3fa7fd22df89a6e34bdfd8a40fa79e95";
+				$.ajax({
+					url: "http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=" + lastFmUsername + "&api_key=" + lastFmApiKey + "&format=json",
+					type: "GET",
+					contentType: "application/json"
+				}).done(function(data) {
+					if (data.recenttracks && data.recenttracks.track && data.recenttracks.track.length) {
+						for (var i = 0; i < data.recenttracks.track.length; i++) {
+							var t = data.recenttracks.track[i];
+							if (t["@attr"] && t["@attr"].nowplaying && t.name && t.artist["#text"]) {
+								var msg = t.artist["#text"] + ": " + t.name;
+								var $el = $(".nowplaying");
+								if (msg != $el.text()) {
+									$el.fadeOut("fast", function() {
+										$el.text(msg);
+										$el.fadeIn("fast");
+									});
+								}
+								return;
+							}
+						}
+						$(".nowplaying").text("");
+					}
+				});
+			}
+
+			updateLastFM();
+			setInterval(updateLastFM, 2517);
+		});
+		</script>
     </body>
 </html>
