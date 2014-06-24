@@ -82,6 +82,9 @@ namespace TransparentWindow.Forms
         {
             base.Draw();
 
+            if (WebView == null)
+                return;
+
             var surface = (TextureSurface)WebView.Surface;
             if (surface != null)
             {

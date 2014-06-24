@@ -158,9 +158,9 @@
     <None Include="web.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Nancy\views\Default\Default.sshtml">
+    <Content Include="Nancy\views\Default\Default.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <None Include="Nancy\views\Default\Blank.sshtml">
