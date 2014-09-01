@@ -20,24 +20,27 @@ This is highly experimental and under development, use at your own risk!
 
 Pages are served from an in application local webserver. Add new view templates to Nancy/views, the views folder is served at /views so you can access everything in here with the appropriate URL.
 
-## Everything is invisible!
+## I Can't Click On My Web Page!
 
-By default all of your web page will be _**completely invisible**_. To change this you need to POST or PUT regions to the server, regions are the area of the form which are visible/clickable.
+By default the entire page is set to be *transparent* to mouse clicks - all mouse clicks pass straight through the form and you can interact with your desktop and normal. To change this you need to POST or PUT regions to the server, regions are the area of the form which are clickable.
 
 POST regions to:
 
  > /screens/regions/{clientid}
  
- in the form (e.g. JSON, but you could probably use XML too):
+ in the form (using JSON here, in theory you could use XML too):
  
-     { X: 0, Y: 0, Width: 0, Height: 0 }
+     { X: 0, Y: 0, Width: 100, Height: 100 }
+     
+This will add a 100x100 pixel region in the top left of the screen as a clickable region.
  
- PUT to the same address, but send an array of regions instead:
+ PUT to the same address with an array of regions:
  
      {
          Regions: [
-             { X: 0, Y: 0, Width: 0, Height: 0 }
+             { X: 0, Y: 0, Width: 100, Height: 100 },
+             { X: 100, Y: 100, Width: 100, Height: 100 }
          ]
      }
      
-Now the areas inside a region should be visible and clickable!
+This will remove all previous clickable regions (because it's a PUT) and make 2 areas of the screen clickable.
