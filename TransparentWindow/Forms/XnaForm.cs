@@ -12,10 +12,14 @@ namespace TransparentWindow.Forms
     public class XnaForm
         : Form
     {
+        public bool AutoInvalidate { get; set; }
+
         public GraphicsDevice GraphicsDevice { get; private set; }
 
-        public XnaForm()
+        public XnaForm(bool autoInvalidate = true)
         {
+            AutoInvalidate = autoInvalidate;
+
             // Create graphics Device
             // Create device presentation parameters
             PresentationParameters p = new PresentationParameters
@@ -50,9 +54,7 @@ namespace TransparentWindow.Forms
             _lastTime = currentTime;
 
             if (elapsedTime > _maxElapsedTime)
-            {
                 elapsedTime = _maxElapsedTime;
-            }
 
             _accumulatedTime += elapsedTime;
 
@@ -66,10 +68,8 @@ namespace TransparentWindow.Forms
                 updated = true;
             }
 
-            if (updated)
-            {
+            if (updated && AutoInvalidate)
                 Invalidate();
-            }
         }
 
         protected virtual void XnaUpdate(TimeSpan deltaTime)
@@ -83,12 +83,18 @@ namespace TransparentWindow.Forms
             ResetGraphicsDevice();
         }
 
+        private int _resetAttempts = 0;
+        private int _resetCountdown = 0;
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
 
             if (GraphicsDevice.GraphicsDeviceStatus == GraphicsDeviceStatus.Normal)
             {
+                //Reset exponential backoff
+                _resetAttempts = 0;
+                _resetCountdown = 0;
+
                 // Clear device with fully transparent black
                 GraphicsDevice.Clear(Color.Transparent);
 
@@ -106,7 +112,18 @@ namespace TransparentWindow.Forms
             }
             else if (GraphicsDevice.GraphicsDeviceStatus == GraphicsDeviceStatus.NotReset)
             {
-                ResetGraphicsDevice();
+                //Reset device with an exponential backoff
+                //This prevents us locking up the system by spamming the graphics driver with reset requests
+                if (_resetCountdown == 0)
+                {
+                    _resetAttempts++;
+                    _resetCountdown = Math.Min(1000, 1 << _resetAttempts);
+                    ResetGraphicsDevice();
+                }
+                else
+                {
+                    _resetCountdown--;
+                }
             }
         }
 
@@ -120,7 +137,7 @@ namespace TransparentWindow.Forms
                     IsFullScreen = false,
                     DeviceWindowHandle = Handle,
                     BackBufferFormat = SurfaceFormat.Vector4,
-                    PresentationInterval = PresentInterval.One
+                    PresentationInterval = PresentInterval.Two
                 });
             }
         }

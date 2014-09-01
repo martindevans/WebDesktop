@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Drawing;
 using System.Windows.Forms;
 using Awesomium.Core;
 using Microsoft.Xna.Framework.Graphics;
@@ -18,7 +17,7 @@ namespace TransparentWindow.Forms
         private readonly SpriteBatch _sprites;
 
         public WebViewForm(Screen screen, string clientId, ApplicationSettings settings)
-            : base(screen)
+            : base(screen, false)
         {
             ClientId = clientId;
             _settings = settings;
@@ -50,24 +49,6 @@ namespace TransparentWindow.Forms
             //Navigate to it
             WebView.Source = uri;
         }
-
-        //protected override void OnLoad(EventArgs e)
-        //{
-        //    base.OnLoad(e);
-        //    ContextMenu = new ContextMenu(
-        //        new MenuItem[]
-        //        {
-        //            new MenuItem("Blind", new MenuItem[]
-        //            {
-        //                new MenuItem("Blind"),
-        //                new MenuItem("Drunk"),
-        //                new MenuItem("Llamas"),
-        //            }),
-        //            new MenuItem("Drunk"),
-        //            new MenuItem("Llamas"),
-        //        }
-        //    );
-        //}
 
         private void CreateSurface(object sender, CreateSurfaceEventArgs args)
         {

@@ -20,7 +20,8 @@ namespace TransparentWindow.Forms
 
         private bool _isClickable = true;
 
-        protected FullScreenTransparentForm(Screen screen)
+        protected FullScreenTransparentForm(Screen screen, bool autoInvalidate = true)
+            : base(autoInvalidate)
         {
             Screen = screen;
 
