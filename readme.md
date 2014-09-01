@@ -1,6 +1,6 @@
 # WebDesktop
 
-WebDesktop puts a transparent over every monitor screen and then draws a webpage onto them, you can use this functionality to build desktop widgets entirely in a web stack.
+WebDesktop puts a transparent window over every monitor screen and then draws a webpage onto them, you can use this functionality to build desktop widgets entirely in a web stack.
 
 ### Warning
 

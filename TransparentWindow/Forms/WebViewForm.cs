@@ -54,7 +54,6 @@ namespace TransparentWindow.Forms
         //protected override void OnLoad(EventArgs e)
         //{
         //    base.OnLoad(e);
-
         //    ContextMenu = new ContextMenu(
         //        new MenuItem[]
         //        {
