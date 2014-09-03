@@ -1,18 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using Nancy;
 using Nancy.Bootstrapper;
 using Nancy.Bootstrappers.Ninject;
 using Nancy.Conventions;
 using Nancy.Json;
-using Nancy.Serialization.JsonNet;
 using Nancy.ViewEngines.Razor;
-using Newtonsoft.Json;
 using Ninject;
-using TransparentWindow.Extensions;
 
 namespace TransparentWindow.Nancy
 {
@@ -20,14 +13,6 @@ namespace TransparentWindow.Nancy
         :NinjectNancyBootstrapper
     {
         private readonly IKernel _kernel;
-
-        protected override NancyInternalConfiguration InternalConfiguration
-        {
-            get
-            {
-                return NancyInternalConfiguration.WithOverrides(c => c.Serializers.Insert(0, typeof(JsonNetSerializer)));
-            }
-        }
 
         public Bootstrapper(IKernel kernel)
         {
@@ -39,14 +24,6 @@ namespace TransparentWindow.Nancy
             ApplicationPipelines.AfterRequest.AddItemToEndOfPipeline(x => x.Response.WithHeader("Access-Control-Allow-Origin", "*"));
             ApplicationPipelines.AfterRequest.AddItemToEndOfPipeline(x => x.Response.WithHeader("Access-Control-Allow-Methods", "DELETE, GET, HEAD, POST, PUT, OPTIONS, PATCH"));
             ApplicationPipelines.AfterRequest.AddItemToEndOfPipeline(x => x.Response.WithHeader("Access-Control-Allow-Headers", "Content-Type"));
-            ApplicationPipelines.AfterRequest.AddItemToEndOfPipeline(x => x.Response.WithHeader("Accept", "application/json"));
-
-            //Default format to JSON
-            ApplicationPipelines.BeforeRequest.AddItemToStartOfPipeline(x =>
-            {
-                x.Request.Headers.Accept = x.Request.Headers.Accept.Append(new Tuple<string, decimal>("application/json", 1.05m));
-                return null;
-            });
         }
 
         protected override IKernel GetApplicationContainer()

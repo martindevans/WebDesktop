@@ -8,12 +8,8 @@ namespace TransparentWindow.Awesomium
         :Surface
     {
         private readonly GraphicsDevice _device;
-        private Texture2D _texture;
 
-        public Texture2D Texture
-        {
-            get { return _texture; }
-        }
+        public Texture2D Texture { get; private set; }
 
         public TextureSurface(GraphicsDevice device)
         {
@@ -25,9 +21,9 @@ namespace TransparentWindow.Awesomium
         //Called every time the view resizes
         protected override void Initialize(IWebView view, int width, int height)
         {
-            if (_texture !=  null)
-                _texture.Dispose();
-            _texture = new Texture2D(_device, width, height, false, SurfaceFormat.Color);
+            if (Texture !=  null)
+                Texture.Dispose();
+            Texture = new Texture2D(_device, width, height, false, SurfaceFormat.Color);
 
             base.Initialize(view, width, height);
         }
@@ -36,7 +32,7 @@ namespace TransparentWindow.Awesomium
         {
             unsafe
             {
-                _texture.SetData(
+                Texture.SetData(
                     0,
                     srcBuffer.ToPointer(),
                     new RECT(destRect.X, destRect.Y, destRect.X + destRect.Width, destRect.Y + destRect.Height),
@@ -56,9 +52,9 @@ namespace TransparentWindow.Awesomium
 
         private void Dispose(object o, EventArgs e)
         {
-            if (_texture != null)
-                _texture.Dispose();
-            _texture = null;
+            if (Texture != null)
+                Texture.Dispose();
+            Texture = null;
         }
 
         public event Action OnDraw;

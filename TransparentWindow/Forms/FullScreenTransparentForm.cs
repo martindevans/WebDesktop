@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using MouseKeyboardActivityMonitor;
@@ -16,7 +14,7 @@ namespace TransparentWindow.Forms
         public Screen Screen { get; private set; }
 
         private readonly MouseHookListener _mouseHook;
-        private GraphicsPath _clickRegion = new GraphicsPath();
+        private GraphicsPath _clickRegion = null;
 
         private bool _isClickable = true;
 
@@ -31,7 +29,7 @@ namespace TransparentWindow.Forms
 
             MakeNotClickable();
 
-            _mouseHook = new MouseHookListener(new GlobalHooker()) {Enabled = true};
+            _mouseHook = new MouseHookListener(new GlobalHooker()) { Enabled = false };
             _mouseHook.MouseMoveExt += OnGlobalMouseMove;
         }
 
@@ -40,6 +38,9 @@ namespace TransparentWindow.Forms
         {
             //Hook to the *global* mouse mouse events, if the mouse enters a "clickable" region of this form change the style (of the entire form) to clickable
             //Once the mouse leaves the clickable area, change the entire form back to unclickable!
+
+            if (_clickRegion == null)
+                return;
 
             var p = new Point(e.X - DesktopBounds.X, e.Y - DesktopBounds.Y);
             if (p.X >= 0 && p.Y >= 0 && p.X <= Bounds.Width && p.Y <= Bounds.Width)
@@ -77,12 +78,15 @@ namespace TransparentWindow.Forms
 
         public void AddClickRegion(GraphicsPath region)
         {
-            _clickRegion.AddPath(region, false);
+            if (_clickRegion == null)
+                _clickRegion = region;
+            else
+                _clickRegion.AddPath(region, false);
         }
 
         public void ClearClickRegion()
         {
-            _clickRegion = new GraphicsPath();
+            _clickRegion = null;
         }
 
         public void SetClickRegion(GraphicsPath path)
@@ -142,6 +146,15 @@ namespace TransparentWindow.Forms
             base.OnPaint(e);
         }
 
+        protected override void XnaUpdate(TimeSpan deltaTime)
+        {
+            base.XnaUpdate(deltaTime);
+
+            //Delay hooking the mouse move handler to prevent laggy mouse movement whilst graphics device initialises
+            if (deltaTime > TimeSpan.FromSeconds(0.25) && !_mouseHook.Enabled)
+                _mouseHook.Enabled = true;
+        }
+
         #region evil windows interop
         //private const int WM_WINDOWPOSCHANGING = 0x0046;
         //private const int WM_NCHITTEST = 0x0084;
@@ -180,7 +193,7 @@ namespace TransparentWindow.Forms
         //}
 
         [DllImport("user32.dll")]
-        static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X,int Y, int cx, int cy, uint uFlags);
+        static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int x, int y, int cx, int cy, uint uFlags);
 
         [DllImport("user32.dll", SetLastError = true)]
         static extern int GetWindowLong(IntPtr hWnd, int nIndex);

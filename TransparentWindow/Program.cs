@@ -38,7 +38,7 @@ namespace TransparentWindow
         private Program()
         {
             _baseUrl = ConfigurationManager.AppSettings["serverUrl"].ToString(CultureInfo.InvariantCulture);
-            _clientId = ConfigurationManager.AppSettings["clientId"].ToString(CultureInfo.InvariantCulture);
+            _clientId = "TEST-PC";
         }
 
         public void Run()
@@ -53,7 +53,7 @@ namespace TransparentWindow
             }
 
             //Lookup settings from server (with exponential backoff) until success
-            ApplicationSettings settings = Helpers.TryExponentialBackup(() => FetchSettings(new RestClient(_baseUrl), _clientId));
+            ApplicationSettings settings = Helpers.TryExponentialBackoff(() => FetchSettings(new RestClient(_baseUrl), _clientId));
 
             //Application setup
             Application.EnableVisualStyles();
@@ -66,14 +66,12 @@ namespace TransparentWindow
                 RemoteDebuggingHost = "127.0.0.1"
             });
 
-            ScreenManager screenManager = new ScreenManager(settings);
-            kernel.Bind<ScreenManager>().ToConstant(screenManager);
+            DisplayManager screenManager = new DisplayManager(settings);
+            kernel.Bind<DisplayManager>().ToConstant(screenManager);
 
             //Create forms for each screen
             foreach (var screen in Screen.AllScreens)
-            {
                 screenManager.CreateFormForScreen(screen);
-            }
 
             //Run until application is quit
             Application.Run();

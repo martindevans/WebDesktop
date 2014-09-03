@@ -7,7 +7,7 @@ namespace TransparentWindow.Nancy.Modules.Settings
         :NancyModule
     {
         //Temporary - use some kind of database in the future
-        private readonly Dictionary<string, Settings> _database = new Dictionary<string, Settings>()
+        private readonly Dictionary<string, Settings> _database = new Dictionary<string, Settings>
         {
             {
                 "TEST-PC", new Settings

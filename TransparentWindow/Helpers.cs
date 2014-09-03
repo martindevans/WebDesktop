@@ -5,7 +5,7 @@ namespace TransparentWindow
 {
     public static class Helpers
     {
-        public static T TryExponentialBackup<T>(Func<T> func, int maxWait = 2500, int maxAttempts = int.MaxValue) where T : class
+        public static T TryExponentialBackoff<T>(Func<T> func, int maxWait = 2500, int maxAttempts = int.MaxValue) where T : class
         {
             T result = null;
             for (int attempt = 0; attempt < maxAttempts && result == null; attempt++)

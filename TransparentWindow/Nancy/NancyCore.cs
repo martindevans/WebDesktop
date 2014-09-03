@@ -20,7 +20,7 @@ namespace TransparentWindow.Nancy
                 RewriteLocalhost = false,
                 AllowChunkedEncoding = false,
 
-                UnhandledExceptionCallback = x => _logger.LogException(LogLevel.Warn, "Unhandled Nancy Exception", x)
+                UnhandledExceptionCallback = x => _logger.Log(LogLevel.Warn, "Unhandled Nancy Exception", x)
             };
 
             var bootstrapper = new Bootstrapper(kernel);

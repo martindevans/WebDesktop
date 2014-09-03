@@ -2,7 +2,6 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
-using Microsoft.Xna.Framework;
 using Nancy;
 using Nancy.ModelBinding;
 using TransparentWindow.Forms;
@@ -12,9 +11,9 @@ namespace TransparentWindow.Nancy.Modules.Screens
     public class ScreensModule
         : NancyModule
     {
-        private readonly ScreenManager _screenManager;
+        private readonly DisplayManager _screenManager;
 
-        public ScreensModule(ScreenManager screenManager)
+        public ScreensModule(DisplayManager screenManager)
             : base("screens")
         {
             _screenManager = screenManager;
