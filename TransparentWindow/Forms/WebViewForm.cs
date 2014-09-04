@@ -53,9 +53,19 @@ namespace TransparentWindow.Forms
         private void CreateSurface(object sender, CreateSurfaceEventArgs args)
         {
             var surface = new TextureSurface(GraphicsDevice);
-            surface.OnDraw += Invalidate;
+            surface.OnDraw += InvalidateRectangle;
 
             args.Surface = surface;
+        }
+
+        private Rectangle _invalidated = default(Rectangle);
+        private void InvalidateRectangle(AweRect aweRect)
+        {
+            //Invalidate the area of the texture drawn to
+            Invalidate(new System.Drawing.Rectangle(aweRect.X, aweRect.Y, aweRect.Width, aweRect.Height));
+
+            //Union this region into all other regions invalidated this frame
+            _invalidated = Rectangle.Union(_invalidated, new Rectangle(aweRect.X, aweRect.Y, aweRect.Width, aweRect.Height));
         }
 
         protected override void Draw()
@@ -68,9 +78,12 @@ namespace TransparentWindow.Forms
             var surface = (TextureSurface)WebView.Surface;
             if (surface != null)
             {
-                _sprites.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
-                _sprites.Draw(surface.Texture, new Rectangle(0, 0, Width, Height), Color.White);
+                //Draw the section of the texture that has been invalidated
+                _sprites.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
+                _sprites.Draw(surface.Texture, _invalidated, _invalidated, Color.White);
                 _sprites.End();
+
+                _invalidated = default(Rectangle);
             }
         }
 

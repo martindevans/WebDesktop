@@ -1,5 +1,6 @@
 ﻿using System;
 using Awesomium.Core;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace TransparentWindow.Awesomium
@@ -42,7 +43,7 @@ namespace TransparentWindow.Awesomium
             base.Paint(srcBuffer, srcRowSpan, srcRect, destRect);
 
             if (OnDraw != null)
-                OnDraw();
+                OnDraw(destRect);
         }
 
         protected override void Scroll(int dx, int dy, AweRect clipRect)
@@ -57,6 +58,6 @@ namespace TransparentWindow.Awesomium
             Texture = null;
         }
 
-        public event Action OnDraw;
+        public event Action<AweRect> OnDraw;
     }
 }
