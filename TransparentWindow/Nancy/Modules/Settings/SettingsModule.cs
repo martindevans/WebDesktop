@@ -15,8 +15,8 @@ namespace TransparentWindow.Nancy.Modules.Settings
                     DefaultUrl = "/static/default.html",
                     ScreenUrlMapping = new Dictionary<string, string>
                     {
-                        {"\\\\.\\DISPLAY1", "/views/Default/Blank"},
-                        {"\\\\.\\DISPLAY2", "/views/Default/Default"}
+                        {"\\\\.\\DISPLAY2", "/views/Default/Blank"},
+                        {"\\\\.\\DISPLAY1", "/views/Default/Default"}
                     },
                 }
             }
