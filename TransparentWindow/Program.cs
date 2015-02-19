@@ -1,12 +1,11 @@
-﻿using System;
-using System.Configuration;
-using System.Globalization;
+﻿using Awesomium.Core;
+using Ninject;
+using System;
+using System.IO.Abstractions;
 using System.Threading;
 using System.Windows.Forms;
-using Awesomium.Core;
-using Ninject;
-using RestSharp;
 using TransparentWindow.Nancy;
+using TransparentWindow.DataSource;
 
 namespace TransparentWindow
 {
@@ -32,28 +31,22 @@ namespace TransparentWindow
         }
         #endregion
 
-        private readonly string _baseUrl;
-        private readonly string _clientId;
-
         private Program()
         {
-            _baseUrl = ConfigurationManager.AppSettings["serverUrl"].ToString(CultureInfo.InvariantCulture);
-            _clientId = "TEST-PC";
         }
 
         public void Run()
         {
             //Create DI kernel
             IKernel kernel = new StandardKernel();
+            kernel.Bind<IFileSystem>().To<FileSystem>().InSingletonScope();
 
-            if (bool.Parse(ConfigurationManager.AppSettings["localServer"].ToString(CultureInfo.InvariantCulture)))
-            {
-                //Startup server
-                NancyCore.Start(kernel);
-            }
+            //Load configuration from disk
+            Configuration config = Configuration.Load(kernel.Get<IFileSystem>());
+            kernel.Bind<Configuration>().ToConstant(config).InSingletonScope();
 
-            //Lookup settings from server (with exponential backoff) until success
-            ApplicationSettings settings = Helpers.TryExponentialBackoff(() => FetchSettings(new RestClient(_baseUrl), _clientId));
+            //Startup server
+            NancyCore.Start(kernel);
 
             //Application setup
             Application.EnableVisualStyles();
@@ -66,31 +59,14 @@ namespace TransparentWindow
                 RemoteDebuggingHost = "127.0.0.1"
             });
 
-            DisplayManager screenManager = new DisplayManager(settings);
-            kernel.Bind<DisplayManager>().ToConstant(screenManager);
-
             //Create forms for each screen
+            DisplayManager screenManager = kernel.Get<DisplayManager>();
+            kernel.Bind<DisplayManager>().ToConstant(screenManager);
             foreach (var screen in Screen.AllScreens)
                 screenManager.CreateFormForScreen(screen);
 
             //Run until application is quit
             Application.Run();
-        }
-
-        private static ApplicationSettings FetchSettings(RestClient client, string clientId)
-        {
-            var request = new RestRequest("settings/{id}", Method.GET);
-            request.AddUrlSegment("id", clientId);
-
-            // execute the request
-            var response = client.Execute<ApplicationSettings>(request);
-
-            if (response.ResponseStatus != ResponseStatus.Completed)
-                return null;
-
-            response.Data.ClientId = clientId;
-            response.Data.BaseUrl = client.BaseUrl;
-            return response.Data;
         }
     }
 }

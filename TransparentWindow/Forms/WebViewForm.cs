@@ -3,6 +3,7 @@ using System.Windows.Forms;
 using Awesomium.Core;
 using Microsoft.Xna.Framework.Graphics;
 using TransparentWindow.Awesomium;
+using TransparentWindow.DataSource;
 using Color = Microsoft.Xna.Framework.Color;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
@@ -13,14 +14,12 @@ namespace TransparentWindow.Forms
         public WebView WebView { get; private set; }
         public string ClientId { get; private set; }
 
-        private readonly ApplicationSettings _settings;
         private readonly SpriteBatch _sprites;
 
-        public WebViewForm(Screen screen, string clientId, ApplicationSettings settings)
+        public WebViewForm(Screen screen, string clientId, Uri uri)
             : base(screen, false)
         {
             ClientId = clientId;
-            _settings = settings;
 
             _sprites = new SpriteBatch(GraphicsDevice);
 
@@ -28,12 +27,6 @@ namespace TransparentWindow.Forms
             WebView = WebCore.CreateWebView(screen.WorkingArea.Width, screen.WorkingArea.Height, WebViewType.Offscreen);
             WebView.IsTransparent = true;
             WebView.CreateSurface += CreateSurface;
-
-            //Get URL mapping for this screen
-            string url;
-            if (!_settings.ScreenUrlMapping.TryGetValue(Screen.DeviceName, out url))
-                url = _settings.DefaultUrl;
-            var uri = new Uri(new Uri(_settings.BaseUrl), url);
 
             //Add client ID to query string
             string qr = "";

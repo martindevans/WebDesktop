@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Configuration>
+  <Server port="56347">
+    <Paths>
+
+    </Paths>
+  </Server>
+  
+  <Displays>
+    <Display id="\\.\DISPLAY1" url="/views/Default/Default"></Display>
+    <Display id="\\.\DISPLAY2" url="/views/Default/Blank"></Display>
+  </Displays>
+</Configuration>

@@ -3,22 +3,23 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
 using System.Windows.Forms;
+using TransparentWindow.DataSource;
 using TransparentWindow.Forms;
 
 namespace TransparentWindow
 {
     public class DisplayManager
     {
-        private readonly ApplicationSettings _settings;
-
         private readonly Dictionary<string, WebViewForm> _forms = new Dictionary<string, WebViewForm>();
+
+        private readonly Configuration _settings;
 
         public IEnumerable<KeyValuePair<string, WebViewForm>> Forms
         {
             get { return _forms; }
         }
 
-        public DisplayManager(ApplicationSettings settings)
+        public DisplayManager(Configuration settings)
         {
             _settings = settings;
         }
@@ -27,7 +28,11 @@ namespace TransparentWindow
         {
             var id = Id(screen.DeviceName);
 
-            var f1 = new WebViewForm(screen, id, _settings);
+            string url;
+            if (!_settings.TryGetUrlForScreen(screen.DeviceName, out url))
+                return;
+
+            var f1 = new WebViewForm(screen, id, new Uri(_settings.BaseUrl, url));
             _forms.Add(id, f1);
             f1.Show();
         }

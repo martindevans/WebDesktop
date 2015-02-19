@@ -1,9 +1,7 @@
-﻿using System;
-using System.Configuration;
-using System.Globalization;
-using Nancy.Hosting.Self;
+﻿using Nancy.Hosting.Self;
 using Ninject;
 using NLog;
+using Configuration = TransparentWindow.DataSource.Configuration;
 
 namespace TransparentWindow.Nancy
 {
@@ -14,7 +12,8 @@ namespace TransparentWindow.Nancy
 
         public static void Start(IKernel kernel)
         {
-            var uri = new Uri(ConfigurationManager.AppSettings["serverUrl"].ToString(CultureInfo.InvariantCulture));
+            
+
             var config = new HostConfiguration
             {
                 RewriteLocalhost = false,
@@ -25,10 +24,11 @@ namespace TransparentWindow.Nancy
 
             var bootstrapper = new Bootstrapper(kernel);
 
-            _host = new NancyHost(bootstrapper, config, uri);
+            var url = kernel.Get<Configuration>().BaseUrl;
+            _host = new NancyHost(bootstrapper, config, url);
             _host.Start();
 
-            _logger.Info("Running WebAPI on {0}", uri);
+            _logger.Info("Running WebAPI on {0}", url);
         }
 
         public static void Update()

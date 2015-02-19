@@ -73,6 +73,9 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.IO.Abstractions">
+      <HintPath>..\packages\System.IO.Abstractions.2.0.0.104\lib\net40\System.IO.Abstractions.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.AspNet.Razor.2.0.30506.0\lib\net40\System.Web.Razor.dll</HintPath>
@@ -87,7 +90,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ApplicationSettings.cs" />
+    <Compile Include="DataSource\Configuration.cs" />
     <Compile Include="DisplayManager.cs" />
     <Compile Include="Evil.cs" />
     <Compile Include="Forms\FullScreenTransparentForm.cs">
@@ -102,7 +105,6 @@
     <Compile Include="Nancy\Modules\Machine\Processes\ProcessesModule.cs" />
     <Compile Include="Nancy\Modules\Main\MainModule.cs" />
     <Compile Include="Nancy\Modules\Screens\ScreensModule.cs" />
-    <Compile Include="Nancy\Modules\Settings\SettingsModule.cs" />
     <Compile Include="Nancy\Modules\Views\ViewsModule.cs" />
     <Compile Include="Nancy\NancyCore.cs" />
     <Compile Include="Awesomium\TextureSurface.cs" />
@@ -148,6 +150,7 @@
     <None Include="web.config" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="DataSource\DefaultConfiguration.xml" />
     <Content Include="Nancy\views\Default\Default.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
