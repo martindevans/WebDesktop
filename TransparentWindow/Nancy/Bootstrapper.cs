@@ -1,11 +1,10 @@
-﻿using System.Collections.Generic;
-using Nancy;
+﻿using Nancy;
 using Nancy.Bootstrapper;
 using Nancy.Bootstrappers.Ninject;
-using Nancy.Conventions;
 using Nancy.Json;
 using Nancy.ViewEngines.Razor;
 using Ninject;
+using System.Collections.Generic;
 
 namespace TransparentWindow.Nancy
 {
@@ -46,13 +45,6 @@ namespace TransparentWindow.Nancy
             JsonSettings.MaxJsonLength = int.MaxValue;
 
             base.ApplicationStartup(container, pipelines);
-        }
-
-        protected override void ConfigureConventions(NancyConventions nancyConventions)
-        {
-            base.ConfigureConventions(nancyConventions);
-
-            nancyConventions.StaticContentsConventions.Add(StaticContentConventionBuilder.AddDirectory("views", @"Nancy/views"));
         }
     }
 

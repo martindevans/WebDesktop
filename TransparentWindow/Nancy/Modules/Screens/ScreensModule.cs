@@ -81,15 +81,19 @@ namespace TransparentWindow.Nancy.Modules.Screens
 
         private struct Rectangle
         {
+// ReSharper disable UnusedAutoPropertyAccessor.Local
             public float X { get; set; }
             public float Y { get; set; }
             public float Width { get; set; }
             public float Height { get; set; }
+// ReSharper restore UnusedAutoPropertyAccessor.Local
         }
 
         private struct Rectangles
         {
+// ReSharper disable UnusedAutoPropertyAccessor.Local
             public Rectangle[] Regions;
+// ReSharper restore UnusedAutoPropertyAccessor.Local
         }
     }
 }

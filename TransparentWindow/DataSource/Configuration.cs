@@ -45,6 +45,17 @@ namespace TransparentWindow.DataSource
             }
         }
 
+        public IEnumerable<KeyValuePair<string, string>> Paths
+        {
+            get
+            {
+                return _document.Element("Configuration")
+                         .Element("Server")
+                         .Elements("Path")
+                         .Select(a => new KeyValuePair<string, string>(a.Attribute("id").Value.ToString(CultureInfo.InvariantCulture), a.Value.ToString(CultureInfo.InvariantCulture)));
+            }
+        }
+
         private Configuration(XDocument document)
         {
             _document = document;

@@ -104,10 +104,12 @@ namespace TransparentWindow
     [StructLayout(LayoutKind.Sequential)]
     public struct RECT
     {
+// ReSharper disable FieldCanBeMadeReadOnly.Global
         public int Left;
         public int Top;
         public int Right;
         public int Bottom;
+// ReSharper restore FieldCanBeMadeReadOnly.Global
 
         public RECT(int left,int top, int right, int bottom)
         {
@@ -124,7 +126,9 @@ namespace TransparentWindow
         {
             public static class IDirect3DTexture9
             {
+// ReSharper disable MemberHidesStaticFromOuterClass
                 public const uint GetSurfaceLevel = 72;
+// ReSharper restore MemberHidesStaticFromOuterClass
             }
         }
 

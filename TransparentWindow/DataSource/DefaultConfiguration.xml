@@ -1,13 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Configuration>
   <Server port="56347">
-    <Paths>
-
-    </Paths>
+      <Path id="test"><![CDATA[C:\Users\Martin\AppData\Roaming\WebDesktop\Test]]></Path>
   </Server>
   
   <Displays>
-    <Display id="\\.\DISPLAY1" url="/views/Default/Default"></Display>
-    <Display id="\\.\DISPLAY2" url="/views/Default/Blank"></Display>
+    <Display id="\\.\DISPLAY1" url="/content/test/Default.html"></Display>
+    <Display id="\\.\DISPLAY2" url="/content/test/Blank.html"></Display>
   </Displays>
 </Configuration>

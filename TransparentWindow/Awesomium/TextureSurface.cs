@@ -1,6 +1,5 @@
 ﻿using System;
 using Awesomium.Core;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace TransparentWindow.Awesomium

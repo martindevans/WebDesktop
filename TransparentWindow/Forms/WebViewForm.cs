@@ -1,9 +1,8 @@
-﻿using System;
-using System.Windows.Forms;
-using Awesomium.Core;
+﻿using Awesomium.Core;
 using Microsoft.Xna.Framework.Graphics;
+using System;
+using System.Windows.Forms;
 using TransparentWindow.Awesomium;
-using TransparentWindow.DataSource;
 using Color = Microsoft.Xna.Framework.Color;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 

@@ -45,9 +45,6 @@ namespace TransparentWindow
             Configuration config = Configuration.Load(kernel.Get<IFileSystem>());
             kernel.Bind<Configuration>().ToConstant(config).InSingletonScope();
 
-            //Startup server
-            NancyCore.Start(kernel);
-
             //Application setup
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
@@ -64,6 +61,9 @@ namespace TransparentWindow
             kernel.Bind<DisplayManager>().ToConstant(screenManager);
             foreach (var screen in Screen.AllScreens)
                 screenManager.CreateFormForScreen(screen);
+
+            //Startup server
+            NancyCore.Start(kernel);
 
             //Run until application is quit
             Application.Run();

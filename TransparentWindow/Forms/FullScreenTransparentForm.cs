@@ -125,7 +125,7 @@ namespace TransparentWindow.Forms
             base.OnResize(e);
 
             // Extend aero glass style to whole form
-            int[] margins = new int[] { 0, 0, Width, Height };
+            int[] margins = { 0, 0, Width, Height };
             DwmExtendFrameIntoClientArea(Handle, ref margins);
         }
 
