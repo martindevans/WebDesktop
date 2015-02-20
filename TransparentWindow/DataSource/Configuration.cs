@@ -18,7 +18,6 @@ namespace TransparentWindow.DataSource
             get
             {
                 return _document.Element("Configuration")
-                    .Element("Displays")
                     .Elements("Display")
                     .Select(a => new KeyValuePair<string, string>(a.Attribute("id").Value.ToString(CultureInfo.InvariantCulture), a.Attribute("url").Value.ToString(CultureInfo.InvariantCulture)));
             }
