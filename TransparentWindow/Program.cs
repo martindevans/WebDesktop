@@ -1,15 +1,17 @@
 ﻿using Awesomium.Core;
+using Microsoft.Win32;
 using Ninject;
 using System;
 using System.IO.Abstractions;
 using System.Threading;
 using System.Windows.Forms;
-using TransparentWindow.Nancy;
 using TransparentWindow.DataSource;
+using TransparentWindow.Nancy;
 
 namespace TransparentWindow
 {
-    public static class Program
+    public class Program
+        : ApplicationContext
     {
         #region startup
         /// <summary>
@@ -19,9 +21,15 @@ namespace TransparentWindow
         static void Main()
         {
             var mutex = new Mutex(true, "TransparentDesktopMutex");
-            if (mutex.WaitOne(0, false))
-            {
-                Run();
+            if (mutex.WaitOne(0, false)) {
+
+                //Application setup
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+
+                //Run
+                Program p = new Program();
+                p.Run();
             }
             else
                 MessageBox.Show("TransparentDesktop Is Already Running!");
@@ -30,19 +38,23 @@ namespace TransparentWindow
         }
         #endregion
 
-        private static void Run()
+        private readonly TrayManager _trayManager;
+
+        public Program()
+        {
+            _trayManager = new TrayManager();
+        }
+
+        private void Run()
         {
             //Create DI kernel
             IKernel kernel = new StandardKernel();
             kernel.Bind<IFileSystem>().To<FileSystem>().InSingletonScope();
+            kernel.Bind<TrayManager>().ToConstant(_trayManager);
 
             //Load configuration from disk
             Configuration config = Configuration.Load(kernel.Get<IFileSystem>());
             kernel.Bind<Configuration>().ToConstant(config).InSingletonScope();
-
-            //Application setup
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
 
             //Awesomium setup
             WebCore.Initialize(new WebConfig
@@ -61,7 +73,10 @@ namespace TransparentWindow
             NancyCore.Start(kernel);
 
             //Run until application is quit
-            Application.Run();
+            Application.Run(this);
+
+            //Close tray icon when program closes
+            _trayManager.Close();
         }
     }
 }

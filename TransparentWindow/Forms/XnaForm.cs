@@ -90,42 +90,54 @@ namespace TransparentWindow.Forms
         {
             base.OnPaint(e);
 
-            if (GraphicsDevice.GraphicsDeviceStatus == GraphicsDeviceStatus.Normal)
-            {
-                //Reset exponential backoff
-                _resetAttempts = 0;
-                _resetCountdown = 0;
+            switch (GraphicsDevice.GraphicsDeviceStatus) {
+                case GraphicsDeviceStatus.Normal: {
 
-                // Clear device with fully transparent black
-                GraphicsDevice.Clear(Color.Transparent);
+                    //Reset exponential backoff
+                    _resetAttempts = 0;
+                    _resetCountdown = 0;
 
-                //Draw stuff
-                Draw(e.ClipRectangle);
+                    // Clear device with fully transparent black
+                    GraphicsDevice.Clear(Color.Transparent);
 
-                // Present the device contents into form
-                try
-                {
-                    var r = new Microsoft.Xna.Framework.Rectangle(e.ClipRectangle.X, e.ClipRectangle.Y, e.ClipRectangle.Width, e.ClipRectangle.Height);
-                    GraphicsDevice.Present(r, r, Handle);
+                    //Draw stuff
+                    Draw(e.ClipRectangle);
+
+                    // Present the device contents into form
+                    try
+                    {
+                        var r = new Microsoft.Xna.Framework.Rectangle(e.ClipRectangle.X, e.ClipRectangle.Y, e.ClipRectangle.Width, e.ClipRectangle.Height);
+                        GraphicsDevice.Present(r, r, Handle);
+                    }
+                    catch (DeviceLostException)
+                    {
+                        //Do nothing, next time we try to present the device status will direct us down the right path to recovery
+                    }
+
+                    break;
                 }
-                catch (DeviceLostException)
-                {
+
+                case GraphicsDeviceStatus.Lost:
+                case GraphicsDeviceStatus.NotReset: {
+
+                    //Reset device with an exponential backoff
+                    //This prevents us locking up the system by spamming the graphics driver with reset requests
+                    if (_resetCountdown == 0)
+                    {
+                        _resetAttempts++;
+                        _resetCountdown = Math.Min(1000, 1 << _resetAttempts);
+                        ResetGraphicsDevice();
+                    }
+                    else
+                    {
+                        _resetCountdown--;
+                    }
+
+                    break;
                 }
-            }
-            else if (GraphicsDevice.GraphicsDeviceStatus == GraphicsDeviceStatus.NotReset)
-            {
-                //Reset device with an exponential backoff
-                //This prevents us locking up the system by spamming the graphics driver with reset requests
-                if (_resetCountdown == 0)
-                {
-                    _resetAttempts++;
-                    _resetCountdown = Math.Min(1000, 1 << _resetAttempts);
-                    ResetGraphicsDevice();
-                }
-                else
-                {
-                    _resetCountdown--;
-                }
+
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 

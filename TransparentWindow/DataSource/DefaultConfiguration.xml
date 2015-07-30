@@ -1,8 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Configuration>
   <Server port="56347">
-      <Path id="test"><![CDATA[C:\Users\Martin\AppData\Roaming\WebDesktop\Test]]></Path>
+    <!-- Mount the default path (copied locally besides the executable -->
+    <Path id="default"><![CDATA[DefaultPage]]></Path>
   </Server>
-  
-  <Display id="\\.\DISPLAY1" url="/content/test/Default.html" />
+
+  <!-- Display the default page -->
+  <Display id="\\.\DISPLAY1" url="/content/default/Default.html" />
 </Configuration>
