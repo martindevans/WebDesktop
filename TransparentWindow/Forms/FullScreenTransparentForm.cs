@@ -3,8 +3,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using MouseKeyboardActivityMonitor;
-using MouseKeyboardActivityMonitor.WinApi;
+using Gma.System.MouseKeyHook;
 
 namespace TransparentWindow.Forms
 {
@@ -13,7 +12,9 @@ namespace TransparentWindow.Forms
     {
         public Screen Screen { get; private set; }
 
-        private readonly MouseHookListener _mouseHook;
+        private readonly IKeyboardMouseEvents _globalHook;
+        private bool _mouseHookEnabled = false;
+
         private GraphicsPath _clickRegion = null;
 
         private bool _isClickable = true;
@@ -29,8 +30,7 @@ namespace TransparentWindow.Forms
 
             MakeNotClickable();
 
-            _mouseHook = new MouseHookListener(new GlobalHooker()) { Enabled = false };
-            _mouseHook.MouseMoveExt += OnGlobalMouseMove;
+            _globalHook = Hook.GlobalEvents();
         }
 
         #region click regions
@@ -107,7 +107,8 @@ namespace TransparentWindow.Forms
 
         protected override void Dispose(bool disposing)
         {
-            _mouseHook.Dispose();
+            _globalHook.MouseMoveExt -= OnGlobalMouseMove;
+            _globalHook.Dispose();
 
             base.Dispose(disposing);
         }
@@ -151,8 +152,10 @@ namespace TransparentWindow.Forms
             base.XnaUpdate(deltaTime);
 
             //Delay hooking the mouse move handler to prevent laggy mouse movement whilst graphics device initialises
-            if (deltaTime > TimeSpan.FromSeconds(0.25) && !_mouseHook.Enabled)
-                _mouseHook.Enabled = true;
+            if (deltaTime > TimeSpan.FromSeconds(0.25) && !_mouseHookEnabled) {
+                _globalHook.MouseMoveExt += OnGlobalMouseMove;
+                _mouseHookEnabled = true;
+            }
         }
 
         #region evil windows interop
