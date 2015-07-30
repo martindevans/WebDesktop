@@ -104,12 +104,12 @@ namespace TransparentWindow
     [StructLayout(LayoutKind.Sequential)]
     public struct RECT
     {
-// ReSharper disable FieldCanBeMadeReadOnly.Global
-        public int Left;
-        public int Top;
-        public int Right;
-        public int Bottom;
-// ReSharper restore FieldCanBeMadeReadOnly.Global
+// ReSharper disable All
+        private int Left;
+        private int Top;
+        private int Right;
+        private int Bottom;
+// ReSharper restore All
 
         public RECT(int left,int top, int right, int bottom)
         {

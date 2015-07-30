@@ -12,27 +12,32 @@ namespace TransparentWindow.DataSource
     public class Configuration
     {
         private readonly XDocument _document;
+        private readonly XElement _configRoot;
 
-        public IEnumerable<KeyValuePair<string, string>>  DisplayMappings
+        private IEnumerable<KeyValuePair<string, string>>  DisplayMappings
         {
             get
             {
-                return _document.Element("Configuration")
+                return _configRoot
                     .Elements("Display")
                     .Select(a => new KeyValuePair<string, string>(a.Attribute("id").Value.ToString(CultureInfo.InvariantCulture), a.Attribute("url").Value.ToString(CultureInfo.InvariantCulture)));
             }
         }
 
-        public ushort Port
+        private const ushort DEFAULT_PORT = 56347;
+        private ushort Port
         {
             get
             {
-                var v = _document.Element("Configuration")
-                                 .Element("Server")
-                                 .Attribute("port")
-                                 .Value;
+                var server = _configRoot.Element("Server");
+                if (server == null)
+                    return DEFAULT_PORT;
 
-                return ushort.Parse(v);
+                var port = server.Attribute("port");
+                if (port == null)
+                    return DEFAULT_PORT;
+
+                return ushort.Parse(port.Value);
             }
         }
 
@@ -48,16 +53,26 @@ namespace TransparentWindow.DataSource
         {
             get
             {
-                return _document.Element("Configuration")
-                         .Element("Server")
-                         .Elements("Path")
-                         .Select(a => new KeyValuePair<string, string>(a.Attribute("id").Value.ToString(CultureInfo.InvariantCulture), a.Value.ToString(CultureInfo.InvariantCulture)));
+                var server = _configRoot.Element("Server");
+                if (server == null)
+                    return new KeyValuePair<string, string>[0];
+
+                var paths = server.Elements("Path");
+
+                return paths.Select(a => new KeyValuePair<string, string>(
+                    a.Attribute("id").Value.ToString(CultureInfo.InvariantCulture),
+                    a.Value.ToString(CultureInfo.InvariantCulture))
+                );
             }
         }
 
         private Configuration(XDocument document)
         {
             _document = document;
+            _configRoot = _document.Element("Configuration");
+
+            if (_configRoot == null)
+                throw new ArgumentException("document does not contain a <Configuration> element", "document");
         }
 
         public bool TryGetUrlForScreen(string screenName, out string url)
@@ -71,19 +86,19 @@ namespace TransparentWindow.DataSource
 
         public static Configuration Load(IFileSystem fileSystem)
         {
-            var doc = new Loader().LoadConfiguration(fileSystem);
+            var doc = Loader.LoadConfiguration(fileSystem);
 
             return new Configuration(doc);
         }
 
         public void Save()
         {
-            new Loader().SaveConfiguration(_document);
+            Loader.SaveConfiguration(_document);
         }
 
-        private class Loader
+        private static class Loader
         {
-            private string RootDataDirectory
+            private static string RootDataDirectory
             {
                 get
                 {
@@ -91,12 +106,12 @@ namespace TransparentWindow.DataSource
                 }
             }
 
-            private string GetConfigurationFilePath()
+            private static string GetConfigurationFilePath()
             {
                 return Path.Combine(RootDataDirectory, "Configuration.xml");
             }
 
-            public XDocument LoadConfiguration(IFileSystem filesystem)
+            public static XDocument LoadConfiguration(IFileSystem filesystem)
             {
                 string xmlFile = GetConfigurationFilePath();
 
@@ -120,7 +135,7 @@ namespace TransparentWindow.DataSource
                 }
             }
 
-            public void SaveConfiguration(XDocument document)
+            public static void SaveConfiguration(XDocument document)
             {
                 string xmlFile = GetConfigurationFilePath();
 

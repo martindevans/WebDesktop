@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.IO.Abstractions;
+using System.Linq;
 using System.Threading;
 using Nancy;
 using TransparentWindow.DataSource;
@@ -41,16 +42,11 @@ namespace TransparentWindow.Nancy.Modules.Content
 
         private string FindResource(string path)
         {
-            foreach (var pathPair in _configuration.Paths)
-            {
-                if (path.StartsWith(pathPair.Key, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    var sub = path.Substring(pathPair.Key.Length).TrimStart(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-                    return Path.Combine(pathPair.Value, sub);
-                }
-            }
-
-            return null;
+            return (from pathPair in _configuration.Paths
+                    where path.StartsWith(pathPair.Key, StringComparison.InvariantCultureIgnoreCase)
+                    let sub = path.Substring(pathPair.Key.Length).TrimStart(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+                    select Path.Combine(pathPair.Value, sub)
+            ).FirstOrDefault();
         }
     }
 }

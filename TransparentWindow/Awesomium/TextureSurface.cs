@@ -37,7 +37,8 @@ namespace TransparentWindow.Awesomium
                     srcBuffer.ToPointer(),
                     new RECT(destRect.X, destRect.Y, destRect.X + destRect.Width, destRect.Y + destRect.Height),
                     (uint)srcRowSpan,
-                    new RECT(srcRect.X, srcRect.Y, srcRect.X + srcRect.Width, srcRect.Y + srcRect.Height), D3DFORMAT.A8R8G8B8);
+                    new RECT(srcRect.X, srcRect.Y, srcRect.X + srcRect.Width, srcRect.Y + srcRect.Height), D3DFORMAT.A8R8G8B8
+                );
             }
             base.Paint(srcBuffer, srcRowSpan, srcRect, destRect);
 

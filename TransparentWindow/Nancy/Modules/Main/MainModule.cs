@@ -14,7 +14,7 @@ namespace TransparentWindow.Nancy.Modules.Main
             _routeCacheProvider = routeCacheProvider;
 
             Get["/"] = ListRoutes;
-            Delete["/"] = ExitGame;
+            Delete["/"] = Exit;
         }
 
         private dynamic ListRoutes(dynamic parameters)
@@ -23,7 +23,7 @@ namespace TransparentWindow.Nancy.Modules.Main
             return View["routes.cshtml", cache];
         }
 
-        private dynamic ExitGame(dynamic parameters)
+        private static dynamic Exit(dynamic parameters)
         {
             Application.Exit();
             return HttpStatusCode.OK;

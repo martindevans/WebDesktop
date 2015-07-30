@@ -25,6 +25,9 @@ namespace TransparentWindow.Nancy.Modules
 
         protected static Func<dynamic, CancellationToken, Task<T>> Async<T>(Func<dynamic, T> method, TaskScheduler scheduler = null)
         {
+            if (scheduler == null)
+                throw new ArgumentNullException("scheduler");
+
             return (p, c) => Task<T>.Factory.StartNew(method, p, c, TaskCreationOptions.PreferFairness, scheduler);
         }
 
@@ -35,6 +38,9 @@ namespace TransparentWindow.Nancy.Modules
 
         protected static Func<dynamic, CancellationToken, Task<T>> Async<T>(Func<dynamic, CancellationToken, T> method, TaskScheduler scheduler = null)
         {
+            if (scheduler == null)
+                throw new ArgumentNullException("scheduler");
+
             return (p, c) => Task<T>.Factory.StartNew(() => method(p, c), c, TaskCreationOptions.PreferFairness, scheduler);
         }
         #endregion

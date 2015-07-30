@@ -26,7 +26,7 @@ namespace TransparentWindow.Nancy.Modules.Screens
             Delete["/regions/{clientid}"] = DeleteRegion;
         }
 
-        private dynamic SerializeForm(WebViewForm f)
+        private static dynamic SerializeForm(WebViewForm f)
         {
             return new
             {
@@ -91,9 +91,9 @@ namespace TransparentWindow.Nancy.Modules.Screens
 
         private struct Rectangles
         {
-// ReSharper disable UnusedAutoPropertyAccessor.Local
+// ReSharper disable UnassignedField.Compiler
             public Rectangle[] Regions;
-// ReSharper restore UnusedAutoPropertyAccessor.Local
+// ReSharper restore UnassignedField.Compiler
         }
     }
 }

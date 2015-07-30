@@ -16,7 +16,7 @@ namespace TransparentWindow.Nancy.Modules.Machine.Processes
             Post["/"] = CreateProcess;
         }
 
-        public dynamic SerializeProcess(Process p)
+        private static dynamic SerializeProcess(Process p)
         {
             if (p.HasExited)
             {
@@ -40,12 +40,12 @@ namespace TransparentWindow.Nancy.Modules.Machine.Processes
             }
         }
 
-        private dynamic GetProcessList(dynamic o)
+        private static dynamic GetProcessList(dynamic o)
         {
             return Process.GetProcesses().Select(a => SerializeProcess(a)).ToArray();
         }
 
-        private object GetProcess(dynamic o)
+        private static object GetProcess(dynamic o)
         {
             var nid = (string)o.nameorid;
 

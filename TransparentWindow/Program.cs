@@ -9,7 +9,7 @@ using TransparentWindow.DataSource;
 
 namespace TransparentWindow
 {
-    public class Program
+    public static class Program
     {
         #region startup
         /// <summary>
@@ -21,8 +21,7 @@ namespace TransparentWindow
             var mutex = new Mutex(true, "TransparentDesktopMutex");
             if (mutex.WaitOne(0, false))
             {
-                Program p = new Program();
-                p.Run();
+                Run();
             }
             else
                 MessageBox.Show("TransparentDesktop Is Already Running!");
@@ -31,11 +30,7 @@ namespace TransparentWindow
         }
         #endregion
 
-        private Program()
-        {
-        }
-
-        public void Run()
+        private static void Run()
         {
             //Create DI kernel
             IKernel kernel = new StandardKernel();

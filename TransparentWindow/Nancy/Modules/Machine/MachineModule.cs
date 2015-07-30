@@ -20,7 +20,7 @@ namespace TransparentWindow.Nancy.Modules.Machine
             };
         }
 
-        private dynamic GetPerformanceCounter(dynamic request)
+        private static dynamic GetPerformanceCounter(dynamic request)
         {
             //Using this is generally a bad idea, creating performance counters seems very heavyweight. Need to find a way to cache them.
             //perhaps instead offer websockets to get performance data. That way when all connections to a given socket are closed you can dispose the associated performance counter

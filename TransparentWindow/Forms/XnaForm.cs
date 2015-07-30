@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Rectangle = System.Drawing.Rectangle;
 
 namespace TransparentWindow.Forms
 {
@@ -12,13 +13,13 @@ namespace TransparentWindow.Forms
     public class XnaForm
         : Form
     {
-        public bool AutoInvalidate { get; set; }
+        private readonly bool _autoInvalidate;
 
-        public GraphicsDevice GraphicsDevice { get; private set; }
+        protected GraphicsDevice GraphicsDevice { get; private set; }
 
-        public XnaForm(bool autoInvalidate = true)
+        protected XnaForm(bool autoInvalidate = true)
         {
-            AutoInvalidate = autoInvalidate;
+            _autoInvalidate = autoInvalidate;
 
             // Create graphics Device
             // Create device presentation parameters
@@ -45,7 +46,7 @@ namespace TransparentWindow.Forms
         TimeSpan _accumulatedTime;
         TimeSpan _lastTime;
 
-        protected void Tick(object sender, EventArgs eventArgs)
+        private void Tick(object sender, EventArgs eventArgs)
         {
             //All taken verbatim from: http://blogs.msdn.com/b/shawnhar/archive/2010/12/06/when-winforms-met-game-loop.aspx?Redirected=true
 
@@ -68,7 +69,7 @@ namespace TransparentWindow.Forms
                 updated = true;
             }
 
-            if (updated && AutoInvalidate)
+            if (updated && _autoInvalidate)
                 Invalidate();
         }
 
@@ -99,12 +100,13 @@ namespace TransparentWindow.Forms
                 GraphicsDevice.Clear(Color.Transparent);
 
                 //Draw stuff
-                Draw();
+                Draw(e.ClipRectangle);
 
                 // Present the device contents into form
                 try
                 {
-                    GraphicsDevice.Present();
+                    var r = new Microsoft.Xna.Framework.Rectangle(e.ClipRectangle.X, e.ClipRectangle.Y, e.ClipRectangle.Width, e.ClipRectangle.Height);
+                    GraphicsDevice.Present(r, r, Handle);
                 }
                 catch (DeviceLostException)
                 {
@@ -142,7 +144,7 @@ namespace TransparentWindow.Forms
             }
         }
 
-        protected virtual void Draw()
+        protected virtual void Draw(Rectangle clipRectangle)
         {
         }
     }

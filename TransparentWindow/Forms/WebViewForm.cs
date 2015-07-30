@@ -4,7 +4,7 @@ using System;
 using System.Windows.Forms;
 using TransparentWindow.Awesomium;
 using Color = Microsoft.Xna.Framework.Color;
-using Rectangle = Microsoft.Xna.Framework.Rectangle;
+using Rectangle = System.Drawing.Rectangle;
 
 namespace TransparentWindow.Forms
 {
@@ -50,32 +50,27 @@ namespace TransparentWindow.Forms
             args.Surface = surface;
         }
 
-        private Rectangle _invalidated = default(Rectangle);
         private void InvalidateRectangle(AweRect aweRect)
         {
             //Invalidate the area of the texture drawn to
-            Invalidate(new System.Drawing.Rectangle(aweRect.X, aweRect.Y, aweRect.Width, aweRect.Height));
-
-            //Union this region into all other regions invalidated this frame
-            _invalidated = Rectangle.Union(_invalidated, new Rectangle(aweRect.X, aweRect.Y, aweRect.Width, aweRect.Height));
+            Invalidate(new Rectangle(aweRect.X, aweRect.Y, aweRect.Width, aweRect.Height));
         }
 
-        protected override void Draw()
+        protected override void Draw(Rectangle clipRectangle)
         {
-            base.Draw();
+            base.Draw(clipRectangle);
 
             if (WebView == null)
                 return;
 
+            var r = new Microsoft.Xna.Framework.Rectangle(clipRectangle.X, clipRectangle.Y, clipRectangle.Width, clipRectangle.Height);
+
             var surface = (TextureSurface)WebView.Surface;
             if (surface != null)
             {
-                //Draw the section of the texture that has been invalidated
-                _sprites.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
-                _sprites.Draw(surface.Texture, _invalidated, _invalidated, Color.White);
+                _sprites.Begin(SpriteSortMode.Texture, BlendState.AlphaBlend);
+                _sprites.Draw(surface.Texture, r, r, Color.White);
                 _sprites.End();
-
-                _invalidated = default(Rectangle);
             }
         }
 
