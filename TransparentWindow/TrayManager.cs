@@ -51,7 +51,7 @@ namespace TransparentWindow
 
         private void ConfigureForm(WebViewForm form)
         {
-            MessageBox.Show("Todo");
+            form.ConfigForm.Show();
         }
         #endregion
 

@@ -15,12 +15,17 @@ namespace TransparentWindow.Forms
 
         private readonly SpriteBatch _sprites;
 
+        public ConfigureScreen ConfigForm { get; private set; }
+
         public WebViewForm(Screen screen, string clientId, Uri uri)
             : base(screen, false)
         {
             ClientId = clientId;
 
             _sprites = new SpriteBatch(GraphicsDevice);
+
+            //Create a config screen
+            ConfigForm = new ConfigureScreen(this);
 
             //Create web view
             WebView = WebCore.CreateWebView(screen.WorkingArea.Width, screen.WorkingArea.Height, WebViewType.Offscreen);
@@ -63,13 +68,15 @@ namespace TransparentWindow.Forms
             if (WebView == null)
                 return;
 
-            var r = new Microsoft.Xna.Framework.Rectangle(clipRectangle.X, clipRectangle.Y, clipRectangle.Width, clipRectangle.Height);
-
             var surface = (TextureSurface)WebView.Surface;
             if (surface != null)
             {
                 _sprites.Begin(SpriteSortMode.Texture, BlendState.AlphaBlend);
+
+                //Draw only the region which was invalidated
+                var r = new Microsoft.Xna.Framework.Rectangle(clipRectangle.X, clipRectangle.Y, clipRectangle.Width, clipRectangle.Height);
                 _sprites.Draw(surface.Texture, r, r, Color.White);
+
                 _sprites.End();
             }
         }

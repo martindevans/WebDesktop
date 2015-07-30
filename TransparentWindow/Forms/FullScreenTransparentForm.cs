@@ -137,12 +137,7 @@ namespace TransparentWindow.Forms
 
         protected override void OnPaint(PaintEventArgs e)
         {
-// ReSharper disable RedundantCheckBeforeAssignment
-            if (Bounds != Screen.WorkingArea)
-// ReSharper restore RedundantCheckBeforeAssignment
-            {
-                Bounds = Screen.WorkingArea;
-            }
+            Bounds = Screen.WorkingArea;
 
             base.OnPaint(e);
         }
