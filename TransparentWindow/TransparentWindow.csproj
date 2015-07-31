@@ -129,6 +129,9 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TrayManager.cs" />
+    <EmbeddedResource Include="Forms\ConfigureScreen.resx">
+      <DependentUpon>ConfigureScreen.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\WebViewForm.resx">
       <DependentUpon>WebViewForm.cs</DependentUpon>
     </EmbeddedResource>
