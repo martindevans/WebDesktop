@@ -3,6 +3,7 @@
 *.cachefile
 
 _ReSharper.TransparentWindow
+_ReSharper.Caches
 
 TransparentWindow/bin
 TransparentWindow/obj

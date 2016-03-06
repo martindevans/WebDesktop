@@ -4,9 +4,18 @@ using System.Runtime.InteropServices;
 using System.Security;
 using Microsoft.Xna.Framework.Graphics;
 
+/*
+ * This file contains the code to interact directly with D3D surfaces (so we can rapidly copy across the CPU image buffer from the browser engine)
+ * As the name implies this is some pretty nasty code, be prepared.
+ */
+
 namespace TransparentWindow
 {
     // ReSharper disable InconsistentNaming
+    /// <summary>
+    /// Possible formats of a D3D texture
+    /// https://msdn.microsoft.com/en-us/library/windows/desktop/bb172558(v=vs.85).aspx
+    /// </summary>
     public enum D3DFORMAT : uint
     {
         UNKNOWN = 0,
@@ -73,6 +82,10 @@ namespace TransparentWindow
         CxV8U8 = 117,
     }
 
+    /// <summary>
+    /// Possible D3D texture filter modes
+    /// https://msdn.microsoft.com/en-us/library/windows/desktop/bb205565(v=vs.85).aspx
+    /// </summary>
     [Flags]
     public enum D3DX_FILTER : uint
     {

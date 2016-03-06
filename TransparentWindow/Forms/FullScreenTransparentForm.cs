@@ -29,9 +29,20 @@ namespace TransparentWindow.Forms
             ShowInTaskbar = false;
 
             MakeNotClickable();
+            HideFromAltTab();
 
             _globalHook = Hook.GlobalEvents();
         }
+
+        #region window styling
+        private void HideFromAltTab()
+        {
+            // http://stackoverflow.com/a/551847/108234
+            var windowStyle = GetWindowLong(Handle, (int)GetWindowLongFields.GWL_EXSTYLE);
+            windowStyle |= (int)ExtendedWindowStyles.WS_EX_TOOLWINDOW;
+            SetWindowLong(Handle, (int)GetWindowLongFields.GWL_EXSTYLE, windowStyle);
+        }
+        #endregion
 
         #region click regions
         private void OnGlobalMouseMove(object sender, MouseEventArgs e)
@@ -58,8 +69,8 @@ namespace TransparentWindow.Forms
                 return;
 
             // Set the form clickable
-            int initialStyle = GetWindowLong(Handle, -20);
-            SetWindowLong(Handle, -20, initialStyle & ~0x20);
+            int initialStyle = GetWindowLong(Handle, (int)GetWindowLongFields.GWL_EXSTYLE);
+            SetWindowLong(Handle, (int)GetWindowLongFields.GWL_EXSTYLE, initialStyle & ~0x20);
 
             _isClickable = true;
         }
@@ -70,8 +81,8 @@ namespace TransparentWindow.Forms
                 return;
 
             // Set the form click-through
-            int initialStyle = GetWindowLong(Handle, -20);
-            SetWindowLong(Handle, -20, initialStyle | 0x80000 | 0x20);
+            int initialStyle = GetWindowLong(Handle, (int)GetWindowLongFields.GWL_EXSTYLE);
+            SetWindowLong(Handle, (int)GetWindowLongFields.GWL_EXSTYLE, initialStyle | 0x80000 | 0x20);
 
             _isClickable = false;
         }
@@ -154,13 +165,25 @@ namespace TransparentWindow.Forms
         }
 
         #region evil windows interop
+        // ReSharper disable InconsistentNaming
+        private enum ExtendedWindowStyles
+        {
+            WS_EX_TOOLWINDOW = 0x00000080
+        }
+
+        private enum GetWindowLongFields
+        {
+            GWL_EXSTYLE = -20
+        }
+        // ReSharper restore InconsistentNaming
+
         //private const int WM_WINDOWPOSCHANGING = 0x0046;
         //private const int WM_NCHITTEST = 0x0084;
 
         //const UInt32 SWP_NOZORDER = 0x0004;
-        const UInt32 SWP_NOSIZE = 0x0001;
-        const UInt32 SWP_NOMOVE = 0x0002;
-        const UInt32 SWP_NOACTIVATE = 0x0010;
+        private const UInt32 SWP_NOSIZE = 0x0001;
+        private const UInt32 SWP_NOMOVE = 0x0002;
+        private const UInt32 SWP_NOACTIVATE = 0x0010;
 
         //private static readonly IntPtr HTNOWHERE = new IntPtr(0);
         //private static readonly IntPtr HTTRANSPARENT = new IntPtr(-1);
@@ -191,16 +214,16 @@ namespace TransparentWindow.Forms
         //}
 
         [DllImport("user32.dll")]
-        static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int x, int y, int cx, int cy, uint uFlags);
+        private static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int x, int y, int cx, int cy, uint uFlags);
 
         [DllImport("user32.dll", SetLastError = true)]
-        static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+        private static extern int GetWindowLong(IntPtr hWnd, int nIndex);
 
         [DllImport("user32.dll")]
-        static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
+        private static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
 
         [DllImport("dwmapi.dll")]
-        static extern void DwmExtendFrameIntoClientArea(IntPtr hWnd, ref int[] pMargins);
+        private static extern void DwmExtendFrameIntoClientArea(IntPtr hWnd, ref int[] pMargins);
         #endregion
     }
 }

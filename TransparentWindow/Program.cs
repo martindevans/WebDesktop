@@ -1,8 +1,8 @@
 ﻿using Awesomium.Core;
-using Microsoft.Win32;
 using Ninject;
 using System;
 using System.IO.Abstractions;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
 using TransparentWindow.DataSource;
