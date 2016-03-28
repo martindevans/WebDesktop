@@ -118,10 +118,10 @@ namespace TransparentWindow
     public struct RECT
     {
 // ReSharper disable All
-        private int Left;
-        private int Top;
-        private int Right;
-        private int Bottom;
+        public int Left;
+        public int Top;
+        public int Right;
+        public int Bottom;
 // ReSharper restore All
 
         public RECT(int left,int top, int right, int bottom)

@@ -37,7 +37,7 @@ namespace TransparentWindow
                     //Exit the application
                     new MenuItem("Exit", (_, __) => {
                         Close();
-                        Environment.Exit(1);
+                        Application.Exit();
                     }),
                 })
             };
@@ -46,7 +46,10 @@ namespace TransparentWindow
         #region window management
         public void AddScreen(WebViewForm form)
         {
-            _screens.MenuItems.Add(new MenuItem(form.Screen.DeviceName, (_, __) => ConfigureForm(form)));
+            var name = form.Screen.DeviceName + (form.Screen.Primary ? " (Primary)" : "");
+            var item = new MenuItem(name, (_, __) => ConfigureForm(form));
+
+            _screens.MenuItems.Add(item);
         }
 
         private void ConfigureForm(WebViewForm form)

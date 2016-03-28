@@ -2,6 +2,7 @@
 using Ninject;
 using System;
 using System.IO.Abstractions;
+using System.Management;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
@@ -53,7 +54,7 @@ namespace TransparentWindow
             kernel.Bind<TrayManager>().ToConstant(_trayManager);
 
             //Load configuration from disk
-            Configuration config = Configuration.Load(kernel.Get<IFileSystem>());
+            var config = Configuration.Load(kernel.Get<IFileSystem>());
             kernel.Bind<Configuration>().ToConstant(config).InSingletonScope();
 
             //Awesomium setup
@@ -64,7 +65,7 @@ namespace TransparentWindow
             });
 
             //Create forms for each screen
-            DisplayManager screenManager = kernel.Get<DisplayManager>();
+            var screenManager = kernel.Get<DisplayManager>();
             kernel.Bind<DisplayManager>().ToConstant(screenManager);
             foreach (var screen in Screen.AllScreens)
                 screenManager.CreateFormForScreen(screen);
@@ -75,8 +76,9 @@ namespace TransparentWindow
             //Run until application is quit
             Application.Run(this);
 
-            //Close tray icon when program closes
+            //Close tray icon and save configuration when program closes
             _trayManager.Close();
+            config.Save();
         }
     }
 }

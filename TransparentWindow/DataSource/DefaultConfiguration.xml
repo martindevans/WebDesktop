@@ -5,6 +5,8 @@
     <Path id="default"><![CDATA[DefaultPage]]></Path>
   </Server>
 
+  <Display id=".*" url="/content/default/Default.html" />
+  
   <!-- Display the default page -->
-  <Display id="\\.\DISPLAY1" url="/content/default/Default.html" />
+  <!-- <Display id="\\.\DISPLAY1" url="/content/default/Default.html" /> -->
 </Configuration>

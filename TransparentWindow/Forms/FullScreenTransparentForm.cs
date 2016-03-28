@@ -110,10 +110,14 @@ namespace TransparentWindow.Forms
         {
             base.OnLoad(e);
 
-            Bounds = Screen.WorkingArea;
-
-            //Send to background and do not activate
-            SetWindowPos(Handle, new IntPtr(1), 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+            //Send to background, do not activate, set size to screen working ares
+            const int BOTTOM = 1;
+            SetWindowPos(
+                Handle,
+                (IntPtr)BOTTOM,                                                                                     //Send to bottom of screen stack
+                Screen.WorkingArea.X, Screen.WorkingArea.Y, Screen.WorkingArea.Width, Screen.WorkingArea.Height,    //Set size to working area of this screen
+                SWP_NOACTIVATE | SWP_NOCOPYBITS                                                                     //Don't activate the window and don't bother copying current window contents
+            );
         }
 
         protected override void Dispose(bool disposing)
@@ -184,6 +188,7 @@ namespace TransparentWindow.Forms
         private const UInt32 SWP_NOSIZE = 0x0001;
         private const UInt32 SWP_NOMOVE = 0x0002;
         private const UInt32 SWP_NOACTIVATE = 0x0010;
+        private const UInt32 SWP_NOCOPYBITS = 0x0100;
 
         //private static readonly IntPtr HTNOWHERE = new IntPtr(0);
         //private static readonly IntPtr HTTRANSPARENT = new IntPtr(-1);

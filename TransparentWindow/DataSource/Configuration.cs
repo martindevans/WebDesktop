@@ -5,6 +5,7 @@ using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
 namespace TransparentWindow.DataSource
@@ -72,15 +73,12 @@ namespace TransparentWindow.DataSource
             _configRoot = _document.Element("Configuration");
 
             if (_configRoot == null)
-                throw new ArgumentException("document does not contain a <Configuration> element", "document");
+                throw new ArgumentException("document does not contain a <Configuration> element", nameof(document));
         }
 
         public bool TryGetUrlForScreen(string screenName, out string url)
         {
-            url = DisplayMappings.Where(a => a.Key == screenName)
-                .Select(a => a.Value)
-                .SingleOrDefault();
-
+            url = DisplayMappings.FirstOrDefault(a => Regex.IsMatch(screenName, a.Key)).Value;
             return url != null;
         }
 
