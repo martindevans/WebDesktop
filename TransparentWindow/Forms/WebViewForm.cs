@@ -2,6 +2,8 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Windows.Forms;
+using Ninject;
+using Ninject.Parameters;
 using TransparentWindow.Awesomium;
 using Color = Microsoft.Xna.Framework.Color;
 using Rectangle = System.Drawing.Rectangle;
@@ -17,7 +19,26 @@ namespace TransparentWindow.Forms
 
         public ConfigureScreen ConfigForm { get; private set; }
 
-        public WebViewForm(Screen screen, string clientId, Uri uri)
+        private Uri _uri;
+        public Uri Uri
+        {
+            get { return _uri; }
+            set
+            {
+                //Add client ID to query string
+                var qr = "";
+                if (value.Query == "")
+                    qr += "?";
+                else
+                    qr += "&";
+                qr += "ClientId=" + ClientId;
+
+                //Build complete URL
+                _uri = new Uri(value + qr);
+            }
+        }
+
+        public WebViewForm(IKernel kernel, Screen screen, string clientId, Uri uri)
             : base(screen, false)
         {
             ClientId = clientId;
@@ -25,26 +46,16 @@ namespace TransparentWindow.Forms
             _sprites = new SpriteBatch(GraphicsDevice);
 
             //Create a config screen
-            ConfigForm = new ConfigureScreen(this);
+            ConfigForm = kernel.Get<ConfigureScreen>(new ConstructorArgument("webViewForm", this));
 
             //Create web view
             WebView = WebCore.CreateWebView(screen.WorkingArea.Width, screen.WorkingArea.Height, WebViewType.Offscreen);
             WebView.IsTransparent = true;
             WebView.CreateSurface += CreateSurface;
 
-            //Add client ID to query string
-            string qr = "";
-            if (uri.Query == "")
-                qr += "?";
-            else
-                qr += "&";
-            qr += "ClientId=" + ClientId;
-
-            //Build complete URL
-            uri = new Uri(uri + qr);
-
-            //Navigate to it
-            WebView.Source = uri;
+            //Navigate to uri
+            Uri = uri;
+            WebView.Source = Uri;
         }
 
         private void CreateSurface(object sender, CreateSurfaceEventArgs args)

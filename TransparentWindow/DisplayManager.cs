@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
 using System.Windows.Forms;
+using Ninject;
 using TransparentWindow.DataSource;
 using TransparentWindow.Forms;
 
@@ -12,6 +13,7 @@ namespace TransparentWindow
     {
         private readonly Dictionary<string, WebViewForm> _forms = new Dictionary<string, WebViewForm>();
 
+        private readonly IKernel _kernel;
         private readonly Configuration _settings;
         private readonly TrayManager _trayManager;
 
@@ -20,8 +22,9 @@ namespace TransparentWindow
             get { return _forms; }
         }
 
-        public DisplayManager(Configuration settings, TrayManager trayManager)
+        public DisplayManager(IKernel kernel, Configuration settings, TrayManager trayManager)
         {
+            _kernel = kernel;
             _settings = settings;
             _trayManager = trayManager;
         }
@@ -32,9 +35,9 @@ namespace TransparentWindow
 
             string url;
             if (!_settings.TryGetUrlForScreen(screen.DeviceName, out url))
-                url = "/content/default/Blank.html";
+                url = "/content/DefaultPages/blank/index.html";
 
-            var f1 = new WebViewForm(screen, id, new Uri(_settings.BaseUrl, url));
+            var f1 = new WebViewForm(_kernel, screen, id, new Uri(_settings.BaseUrl, url));
             _forms.Add(id, f1);
             f1.Show();
 

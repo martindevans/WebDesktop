@@ -2,11 +2,16 @@
 <Configuration>
   <Server port="56347">
     <!-- Mount the default path (copied locally besides the executable -->
-    <Path id="default"><![CDATA[DefaultPage]]></Path>
+    <Path id="default"><![CDATA[DefaultPages]]></Path>
+    
+    <!-- Just my personal configuration while I'm testing things -->
+    <Path id="wd1"><![CDATA[C:\Users\Martin\Documents\Web\WebDesktop1]]></Path>
   </Server>
 
-  <Display id=".*" url="/content/default/Default.html" />
-  
-  <!-- Display the default page -->
-  <!-- <Display id="\\.\DISPLAY1" url="/content/default/Default.html" /> -->
+  <!-- Display the default page on all monitors -->
+  <Display id="*" url="/content/default/start-page/index.html" />
+
+  <Display id="\\.\Display1" url="/content/wd1/index.html" />
+ 
+
 </Configuration>

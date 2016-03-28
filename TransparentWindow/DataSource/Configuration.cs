@@ -60,10 +60,11 @@ namespace TransparentWindow.DataSource
 
                 var paths = server.Elements("Path");
 
-                return paths.Select(a => new KeyValuePair<string, string>(
-                    a.Attribute("id").Value.ToString(CultureInfo.InvariantCulture),
-                    a.Value.ToString(CultureInfo.InvariantCulture))
-                );
+                return from el in paths
+                       let id = el.Attribute("id").Value.ToString(CultureInfo.InvariantCulture)
+                       let path = el.Value.ToString(CultureInfo.InvariantCulture)
+                       let absPath = Path.IsPathRooted(path) ? path : Path.Combine(Environment.CurrentDirectory, path)
+                       select new KeyValuePair<string, string>(id, absPath);
             }
         }
 
@@ -78,7 +79,11 @@ namespace TransparentWindow.DataSource
 
         public bool TryGetUrlForScreen(string screenName, out string url)
         {
-            url = DisplayMappings.FirstOrDefault(a => Regex.IsMatch(screenName, a.Key)).Value;
+            url = null;
+            foreach (var displayMapping in DisplayMappings)
+                if (displayMapping.Key == "*" || screenName.StartsWith(displayMapping.Key, StringComparison.InvariantCultureIgnoreCase))
+                    url = displayMapping.Value;
+
             return url != null;
         }
 

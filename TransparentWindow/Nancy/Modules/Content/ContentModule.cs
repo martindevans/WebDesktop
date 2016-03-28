@@ -30,14 +30,10 @@ namespace TransparentWindow.Nancy.Modules.Content
             ct.ThrowIfCancellationRequested();
             var filePath = FindResource((string)path);
 
-            if (filePath == null)
+            if (filePath == null || !File.Exists(filePath))
                 return HttpStatusCode.NotFound;
 
-            var fileInfo = new FileInfoWrapper(new FileInfo(filePath));
-            if (!fileInfo.Exists)
-                return System.Net.HttpStatusCode.NotFound;
-
-            return Response.FromStream(fileInfo.OpenRead(), MimeTypes.GetMimeType(filePath));
+            return Response.FromStream(File.OpenRead(filePath), MimeTypes.GetMimeType(filePath));
         }
 
         private string FindResource(string path)
